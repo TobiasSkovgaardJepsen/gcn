@@ -41,7 +41,7 @@ upload_data: ;
 
 ## Download Data from External Storage
 download_data:
-	wget --directory-prefix=data/raw https://github.com/aditya-grover/node2vec/blob/master/graph/karate.edgelist
+	wget --directory-prefix=data/raw https://github.com/aditya-grover/node2vec/raw/master/graph/karate.edgelist
 
 ## Set up python interpreter environment
 create_environment:
