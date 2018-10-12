@@ -55,8 +55,8 @@ class DeepWalk(Word2Vec, BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         return [
-            self.wv[str(node)]
-            for node in X
+            self.wv[str(x[0])]
+            for x in X
         ]
 
     def _sample_walks(self):
