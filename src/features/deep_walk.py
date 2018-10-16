@@ -6,8 +6,8 @@ def sample_random_walk(network, node, max_length):
     walk = [node]
 
     while len(walk) < max_length:
-        neighbors = network.neighbors(
-                walk[-1])
+        neighbors = list(network.neighbors(
+                walk[-1]))
         if not neighbors:
             break
         else:
@@ -37,10 +37,12 @@ class DeepWalk(Word2Vec, BaseEstimator, TransformerMixin):
         self.dimensionality = dimensionality
         self.context_size = context_size
 
-        self.walks = self._generate_random_walks()
+        self.walks = self._sample_walks()
 
         super().__init__(
-            sentences=[map(str, walk) for walk in self.walks],
+            sentences=[
+                list(map(str, walk))
+                for walk in self.walks],
             size=self.dimensionality,
             window=self.context_size,
             sg=1,  # Use SkipGram architecture
@@ -53,18 +55,18 @@ class DeepWalk(Word2Vec, BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         return [
-            self.wv[str(node)]
-            for node in X
+            self.wv[str(x[0])]
+            for x in X
         ]
 
-    def _sample_random_walks(self):
-        nodes = self.network.nodes()
+    def _sample_walks(self):
+        nodes = list(self.network.nodes())
         walks = []
 
         for _ in range(self.no_walks_per_node):
             shuffle(nodes)
             walks += sample_random_walks(
-                self.network, nodes, self.max_length
+                self.network, nodes, self.max_walk_length
             )
 
         return walks

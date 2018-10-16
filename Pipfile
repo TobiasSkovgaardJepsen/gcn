@@ -9,6 +9,8 @@ click = "*"
 python-dotenv = ">=0.5.1"
 gensim = "*"
 sklearn = "*"
+networkx = "*"
+pandas = "*"
 
 [dev-packages]
 
