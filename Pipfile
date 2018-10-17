@@ -13,6 +13,9 @@ networkx = "*"
 pandas = "*"
 
 [dev-packages]
+ipython = "*"
+jupyter = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.6"
