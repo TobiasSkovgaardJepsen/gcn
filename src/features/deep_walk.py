@@ -27,8 +27,13 @@ def sample_random_walks(network, nodes, max_length):
     return walks
 
 
-class DeepWalk(Word2Vec, BaseEstimator, TransformerMixin):
-    def __init__(self, network, 
+class NodeEmbeddingMixin:
+    def __getitem__(self, item):
+        return super().__getitem__([str(item)])[0]
+
+
+class DeepWalk(NodeEmbeddingMixin, Word2Vec, BaseEstimator, TransformerMixin):
+    def __init__(self, network,
                  no_walks_per_node, max_walk_length,
                  dimensionality, context_size):
         self.network = network
