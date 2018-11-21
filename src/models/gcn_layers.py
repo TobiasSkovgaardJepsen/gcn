@@ -1,5 +1,6 @@
 from mxnet.gluon import HybridBlock  # , Block
 from mxnet.ndarray import array, eye
+import mxnet.ndarray as nd
 import numpy as np
 from scipy.linalg import fractional_matrix_power
 
@@ -22,27 +23,25 @@ class SumAggregator(GraphConvolutionAggregatorBase):
 
 class MeanAggregator(SumAggregator):
     def __init__(self, A, **kwargs):
-        A = np.matrix(A.asnumpy())
+        D = nd.sum(A, axis=0)
 
-        D = np.array(np.sum(A, axis=0))[0]
-        D = np.matrix(np.diag(D))
+        D_hat = D**-1
+        D_hat = nd.diag(D_hat)
 
-        A = D**-1 * A
-        A = array(A)
+        A = D_hat * A
         super().__init__(A=A, **kwargs)
 
 
 class GCNAggregator(SumAggregator):
     def __init__(self, A, **kwargs):
-        # Missing self-loops
-        A = np.matrix(A)
+        A_hat = A.copy() + nd.eye(*A.shape)
+        D = nd.sum(A_hat, axis=0)
 
-        D = np.array(np.sum(A, axis=0))[0]
-        D = np.matrix(np.diag(D))
+        D_hat = D**-0.5
+        D_hat = nd.diag(D_hat)
 
-        A = power(D, -0.5) * A * power(D, -0.5)
-        A = array(A)
-        super().__init__(A=A, **kwargs)
+        A_hat = D_hat * A_hat * D_hat
+        super().__init__(A=A_hat, **kwargs)
 
 
 class DenseAggregator(HybridBlock):
@@ -85,7 +84,7 @@ class GraphConvBase(HybridBlock):
 
 class Propagator(HybridBlock):
     def __init__(self, in_units, out_units,
-                 activation=lambda x: x, **kwargs):
+                 activation=lambda F, x: x, **kwargs):
         super().__init__(**kwargs)
 
         self.activation = activation

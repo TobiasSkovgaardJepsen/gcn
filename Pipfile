@@ -22,6 +22,7 @@ mxnet-mkl = "*"
 ipython = "*"
 jupyter = "*"
 matplotlib = "*"
+ffmpeg = "*"
 
 
 [requires]
